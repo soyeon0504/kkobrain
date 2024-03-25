@@ -7,7 +7,7 @@
   background-color: #fff;
   border-bottom: 1px solid rgba(230, 229, 230, 0);
   transition: border 0.3s;
-  z-index: 99999999;
+  z-index: 9999999999;
 }
 .header-b-line {
   border-bottom: 1px solid rgba(230, 229, 230, 1);
@@ -25,19 +25,17 @@
   margin-right: auto;
 }
 
-/* 로고 swiper 작업 */
+/* 로고 Swiper 작업 */
 .swLogo {
   width: 68px;
   height: 31px;
 }
-
 .swLogo .swiper-slide {
   background: #fff;
 }
-
-.swLogo .swiper-slide img{
+.swLogo .swiper-slide img {
   width: 100%;
-  height: 100%;
+  height: auto;
 }
 
 .nav {
