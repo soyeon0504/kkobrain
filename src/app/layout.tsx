@@ -18,6 +18,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           rel="canonical"
           href="https://kkobrain-soyeon.vercel.app"
         ></link>
+        <meta name="google-site-verification" content="CjhiNpJOA2vVV19-D1aG2TlXazXl8oGe61gDC2Tchn0" />
       </head>
       <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
