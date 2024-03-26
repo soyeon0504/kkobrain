@@ -2,44 +2,56 @@ import "../css/header/header.css";
 import "../css/header/mbmenu.css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectFade, Autoplay } from "swiper/modules";
+import SwiperInit from "swiper";
 
 import "swiper/css";
 import "swiper/css/effect-fade";
 import "swiper/css/autoplay";
-import { useEffect, useRef, useState } from "react";
+import { MouseEvent, useEffect, useRef, useState } from "react";
 
 export const Header = () => {
   // 스크롤 상태 여부
-  const [isScroll, setIsScroll] = useState(false);
+  const [isScroll, setIsScroll] = useState<boolean>(false);
 
   // 모바일 메뉴 참조
-  const iconMore = useRef(null);
-  const mbMenu = useRef(null);
-  const mbInner = useRef(null);
+  const iconMore = useRef<HTMLAnchorElement | null>(null);
+  const mbMenu = useRef<HTMLDivElement | null>(null);
+  const mbInner = useRef<HTMLDivElement | null>(null);
   let isClick = true;
   // 모바일 메뉴 보이기 숨기를 적용
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   // useEffect 에서 태그를 찾지 않고 useRef 를 활용
-  const swLogTag = useRef(null);
+  const swLogTag = useRef<HTMLAnchorElement | null>(null);
   // swiper 를 위한 useRef
-  const swHeaderLogo = useRef(null);
+  const swHeaderLogo = useRef<SwiperInit | null>(null);
+
+  const swiperOption = {
+    modules: [EffectFade, Autoplay],
+    effect: "fade",
+    speed: 500,
+    autoplay: {
+      delay: 200,
+      disableOnInteraction: false,
+    },
+    onInit: (swiper: SwiperInit | null) => {
+      // useRef 를 이용해서 Swiper 를 저장한다.
+      swHeaderLogo.current = swiper;
+      console.log("상단 슬라이드", swHeaderLogo.current);
+      swHeaderLogo.current?.autoplay.stop();
+    },
+  };
 
   const handleMouseEnter = () => {
-    if (swHeaderLogo.current.swiper) {
-      swHeaderLogo.current.swiper.autoplay.start();
-    }
+    swHeaderLogo.current?.autoplay.start();
   };
   const handleMouseLeave = () => {
-    if (swHeaderLogo.current.swiper) {
-      swHeaderLogo.current.swiper.autoplay.stop();
-      // // 첫 번째 슬라이드로 강제로 이동시킨다.
-      swHeaderLogo.current.swiper.slideTo(1);
-    }
+    swHeaderLogo.current?.autoplay.stop();
+    swHeaderLogo.current?.slideTo(1);
   };
 
   // 반응형 메뉴
-  const hanldeClickMore = (event) => {
+  const hanldeClickMore = (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
     if (isClick === false) {
       return;
@@ -61,9 +73,6 @@ export const Header = () => {
   };
 
   useEffect(() => {
-    // console.log(swHeaderLogo.current.swiper.autoplay);
-    swHeaderLogo.current.swiper.autoplay.stop();
-
     window.addEventListener("resize", function () {
       if (window.innerWidth >= 1024) {
         setIsOpen(false);
@@ -90,8 +99,8 @@ export const Header = () => {
     });
 
     return () => {
-      window.removeEventListener("resize");
-      window.removeEventListener("scroll");
+      window.removeEventListener("resize", function () {});
+      window.removeEventListener("scroll", function () {});
     };
   }, []);
 
@@ -101,7 +110,6 @@ export const Header = () => {
         <div className="inner space-between align-items-center">
           <a
             href="#"
-            alt="카카오브레인 블로그"
             aria-label="카카오브레인 블로그"
             className="logo space-between"
             ref={swLogTag}
@@ -112,19 +120,13 @@ export const Header = () => {
               handleMouseLeave();
             }}
           >
-            <img src="images/etc/logo-kakao.png" alt="카카오브레인" className="logo-kakao" />
+            <img
+              src="images/etc/logo-kakao.png"
+              alt="카카오브레인"
+              className="logo-kakao"
+            />
             {/* <!-- Start 로고 슬라이더 --> */}
-            <Swiper
-              className="swLogo"
-              ref={swHeaderLogo}
-              modules={[EffectFade, Autoplay]}
-              effect="fade"
-              speed={500}
-              autoplay={{
-                delay: 200,
-                disableOnInteraction: false,
-              }}
-            >
+            <Swiper className="swLogo" {...swiperOption}>
               <SwiperSlide>
                 <img src="./images/etc/logo-blog01.png" />
               </SwiperSlide>
@@ -158,33 +160,38 @@ export const Header = () => {
 
           <ul className="nav">
             <li>
-              <a href="#" alt="카카오브레인 소식" aria-label="카카오브레인 소식">
+              <a href="#" aria-label="카카오브레인 소식">
                 소식
               </a>
             </li>
             <li>
-              <a href="#" alt="카카오브레인 팀 & 크루" aria-label="카카오브레인 팀 & 크루">
+              <a href="#" aria-label="카카오브레인 팀 & 크루">
                 팀 & 크루
               </a>
             </li>
             <li>
-              <a href="#" alt="카카오브레인 영입" aria-label="카카오브레인 영입">
+              <a href="#" aria-label="카카오브레인 영입">
                 영입
               </a>
             </li>
             <li className="mb-search">
-              <a href="#" alt="카카오브레인 검색" aria-label="카카오브레인 검색" className="icon-bt icon-search">
+              <a
+                href="#"
+                aria-label="카카오브레인 검색"
+                className="icon-bt icon-search"
+              >
                 검색
               </a>
             </li>
             <li className="mb-more">
               <a
                 href="#"
-                alt="카카오브레인 반응형메뉴"
                 aria-label="카카오브레인 반응형메뉴"
-                className={isOpen ? "icon-bt icon-more active" : "icon-bt icon-more"}
+                className={
+                  isOpen ? "icon-bt icon-more active" : "icon-bt icon-more"
+                }
                 ref={iconMore}
-                onClick={(event) => {
+                onClick={event => {
                   hanldeClickMore(event);
                 }}
               >
@@ -198,17 +205,17 @@ export const Header = () => {
         <div className={isOpen ? "mb-inner active" : "mb-inner"} ref={mbInner}>
           <ul className="mb-nav">
             <li>
-              <a href="#" alt="카카오브레인 소식" aria-label="카카오브레인 소식">
+              <a href="#" aria-label="카카오브레인 소식">
                 소식
               </a>
             </li>
             <li>
-              <a href="#" alt="카카오브레인 팀 & 크루" aria-label="카카오브레인 팀 & 크루">
+              <a href="#" aria-label="카카오브레인 팀 & 크루">
                 팀 & 크루
               </a>
             </li>
             <li>
-              <a href="#" alt="카카오브레인 영입" aria-label="카카오브레인 영입">
+              <a href="#" aria-label="카카오브레인 영입">
                 영입
               </a>
             </li>

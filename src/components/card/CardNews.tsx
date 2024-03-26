@@ -1,5 +1,12 @@
 // 뉴스 및 새소식에 보여줄 컴포넌트
-export const CardNews = ({ item, path }) => {
+
+import { INews } from "../../types/type";
+
+type Props = {
+  item: INews;
+  path: string;
+}
+export const CardNews = ({ item, path }:Props) => {
   return (
     <a href={item.link} data-id={item.id} className="content-list-link">
       <div className="content-list-img">

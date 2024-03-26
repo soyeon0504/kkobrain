@@ -1,38 +1,63 @@
 import { useEffect, useRef, useState } from "react";
 import { Autoplay, Pagination } from "swiper/modules";
 import { SwiperSlide, Swiper } from "swiper/react";
-// import "swiper/css";
+import SwiperInit from "swiper";
+import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/autoplay";
+import { IBanner } from "../../types/type";
+import axios, { AxiosResponse } from "axios";
 
 export const MainTop = () => {
   const path = "./images";
-  const [banneerList, setBannerList] = useState([]);
+  const [banneerList, setBannerList] = useState<IBanner[]>([]);
   // 마우스 오버가 되면 play 하기
-  const swBanner = useRef(null);
+  const swBanner = useRef<SwiperInit | null>(null);
+
+  const swiperOption = {
+    loop: true,
+    autoplay: {
+      delay: 500,
+      disableOnInteraction: false,
+    },
+    pagination: {
+      clickable: true,
+    },
+    modules: [Pagination, Autoplay],
+    onInit: (swiper: SwiperInit | null) => {
+      // useRef 를 Swiper 보관용으로
+      swBanner.current = swiper;
+      // console.log(swBanner.current)
+    },
+  };
+
   const handelMouseEnterBanner = () => {
-    if (swBanner.current.swiper) {
-      swBanner.current.swiper.autoplay.stop();
-    }
+    swBanner.current?.autoplay.stop();
   };
   const handelMouseLeaveBanner = () => {
-    if (swBanner.current.swiper) {
-      swBanner.current.swiper.autoplay.start();
-    }
+    swBanner.current?.autoplay.start();
   };
 
   const getBannerList = () => {
     const jsonUrl = "./api/banner.json";
-    fetch(jsonUrl)
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        setBannerList(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    // fetch(jsonUrl)
+    //   .then(res => {
+    //     return res.json();
+    //   })
+    //   .then(data => {
+    //     setBannerList(data);
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
+
+    // axios 는 가져온 자료를 data 속성에 담아둠.
+    axios
+      .get<IBanner[]>(jsonUrl)
+      .then((response: AxiosResponse<IBanner[], any>) =>
+        setBannerList(response.data),
+      )
+      .catch(error => console.log(error));
   };
   useEffect(() => {
     getBannerList();
@@ -41,27 +66,17 @@ export const MainTop = () => {
     <section className="main-top">
       <div className="main-banner">
         {/* <!-- start : 슬라이드 넣기 --> */}
-        <div className="banner-wrap">
-          <Swiper
-            ref={swBanner}
-            className="swBanner"
-            loop={true}
-            autoplay={{
-              delay: 2500,
-              disableOnInteraction: false,
-            }}
-            pagination={{
-              clickable: true,
-            }}
-            modules={[Pagination, Autoplay]}
-            onMouseEnter={() => {
-              handelMouseEnterBanner();
-            }}
-            onMouseLeave={() => {
-              handelMouseLeaveBanner();
-            }}
-          >
-            {banneerList.map((item) => {
+        <div
+          className="banner-wrap"
+          onMouseEnter={() => {
+            handelMouseEnterBanner();
+          }}
+          onMouseLeave={() => {
+            handelMouseLeaveBanner();
+          }}
+        >
+          <Swiper {...swiperOption} className="swBanner">
+            {banneerList.map(item => {
               return (
                 <SwiperSlide key={item.id}>
                   <div
