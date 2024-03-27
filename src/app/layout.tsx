@@ -1,5 +1,5 @@
 // index.html 역할
-
+import { GoogleAnalytics } from '@next/third-parties/google';
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -19,6 +19,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           href="https://kkobrain-soyeon.vercel.app"
         ></link>
         <meta name="google-site-verification" content="CjhiNpJOA2vVV19-D1aG2TlXazXl8oGe61gDC2Tchn0" />
+        <GoogleAnalytics gaId="G-1KE3L2CDJN" />
       </head>
       <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
